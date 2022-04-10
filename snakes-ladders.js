@@ -1,17 +1,27 @@
 console.log("__________FILE_START___________", "\n");
-console.log("\n R - Reject \n F - Finisher \n S - Snake Bite jump \n L - Ladder Climb \n M(number) - moves");
-console.log("\nUser input : ");
+console.log(
+  "\n INDEX OF MOVE TYPES \n R - Reject \n F - Finisher \n S - Snake Bite jump \n L - Ladder Climb \n M(number) - moves"
+);
+console.log("\n\n__________USER INPUT_____________");
 
 // USER INPUTS START
 const ladders = [
   [2, 10],
   [5, 11],
   [7, 21],
+  [17, 25],
+  [4, 58],
+  [27, 47],
+  [77, 98],
 ];
 const snakes = [
   [3, 9],
   [1, 10],
-  [51, 82],
+  [11, 22],
+  [31, 40],
+  [51, 72],
+  [81, 90],
+  [91, 94],
 ];
 const noOfSimulations = 2;
 // USER INPUTS END
@@ -24,7 +34,11 @@ console.log(`\Simulations : ${noOfSimulations}`);
 
 // STAT VARIABLES
 let biggestClimb = 0;
-let biggestSlide = 100;
+let biggestClimbInThisTurn = 0;
+let biggestSlide = 0;
+let biggestSlideInThisTurn = 0;
+let rollsInThisTurn = [];
+let longestTurn = [];
 // STAT VARIABLES
 
 let moves = [];
@@ -36,11 +50,16 @@ for (i = 0; i < snakes.length; i++) {
 for (i = 0; i < ladders.length; i++) {
   board[ladders[i][0] - 1] = "L" + i;
 }
-console.log(board);
+
 let moveType = [];
+
+const diceRoll = () => {
+  return Math.floor(Math.random() * 6) + 1;
+};
 
 const turn = (currentPosition, moveIndexInTurn) => {
   const number = diceRoll();
+  rollsInThisTurn.push(number);
   let diffFromWin = 100 - currentPosition;
   if (diffFromWin <= 6) {
     if (number !== diffFromWin) {
@@ -60,10 +79,15 @@ const turn = (currentPosition, moveIndexInTurn) => {
     let solIndex = parseInt(squareState.substring(1));
     if (sol === "S") {
       moveType[moveIndexInTurn] += " " + squareState;
+      if (biggestSlideInThisTurn < currentPositionInTurn - snakes[solIndex][0]) {
+        biggestSlideInThisTurn += currentPositionInTurn - snakes[solIndex][0];
+      }
       currentPositionInTurn = snakes[solIndex][0];
-      console.log("\n", sol, solIndex, snakes[solIndex][0]);
     } else if (sol === "L") {
       moveType[moveIndexInTurn] += " " + squareState;
+      if (biggestClimbInThisTurn < ladders[solIndex][1] - currentPositionInTurn) {
+        biggestClimbInThisTurn += ladders[solIndex][1] - currentPositionInTurn;
+      }
       currentPositionInTurn = ladders[solIndex][1];
     }
   }
@@ -75,26 +99,50 @@ const turn = (currentPosition, moveIndexInTurn) => {
   }
 };
 
-const diceRoll = () => {
-  return Math.floor(Math.random() * 6) + 1;
-};
-
 const simulate = (n) => {
   for (let j = 1; j <= n; j++) {
     moves = [];
     moveType = [];
-    console.log(`__________SIMULATION ${j}_____________`);
+
+    console.log(`\n__________SIMULATION ${j}_____________`);
     let tokenPosition = 0;
     let moveIndex = 0;
     while (tokenPosition < 100) {
+      // INITIALIZING
+      biggestClimbInThisTurn = 0;
+      biggestSlideInThisTurn = 0;
       moveType[moveIndex] = "";
+      rollsInThisTurn = [];
+      // END
+      // TURN EXECUTION
       tokenPosition = turn(tokenPosition, moveIndex++);
+      // END
+      //
       moves.push(tokenPosition);
+      if (biggestClimb < biggestClimbInThisTurn) {
+        biggestClimb = biggestClimbInThisTurn;
+      }
+      if (biggestSlide < biggestSlideInThisTurn) {
+        biggestSlide = biggestSlideInThisTurn;
+      }
+      if (
+        rollsInThisTurn.length > longestTurn.length ||
+        (rollsInThisTurn.length == longestTurn.length &&
+          rollsInThisTurn[rollsInThisTurn.length - 1] > longestTurn[longestTurn - 1])
+      ) {
+        longestTurn = rollsInThisTurn;
+      }
     }
-    console.log("\nPlayer token : " + moves);
-    console.log("\nMove Detail : " + moveType);
+    console.log("\nPlayer token over turns : " + moves);
+    console.log("\nAll move details : " + moveType);
   }
 };
 
 simulate(noOfSimulations);
+
+// RESULT
+console.log("\n__________RESULTS_____________");
+console.log("Biggest Slide : ", biggestSlide);
+console.log("Biggest Climb : ", biggestClimb);
+console.log("Longest Turn : ", longestTurn);
 console.log("__________FILE_END_____________");
