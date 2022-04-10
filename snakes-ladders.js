@@ -1,6 +1,8 @@
 console.log("__________FILE_START___________", "\n");
-console.log(" R - Reject \n F - Finisher \n S - Snake Bite jump \n L - Ladder Climb \n M(number) - moves");
-let moves = [];
+console.log("\n R - Reject \n F - Finisher \n S - Snake Bite jump \n L - Ladder Climb \n M(number) - moves");
+console.log("\nUser input : ");
+
+// USER INPUTS START
 const ladders = [
   [2, 10],
   [5, 11],
@@ -10,6 +12,16 @@ const snakes = [
   [3, 9],
   [1, 10],
 ];
+const noOfSimulations = 2;
+// USER INPUTS END
+
+// USER INPUT LOG START
+console.log(`\nSnakes : ${snakes.join("|")}`);
+console.log(`\Ladders : ${ladders.join("|")}`);
+console.log(`\Simulations : ${noOfSimulations}`);
+// USER INPUT LOG END
+
+let moves = [];
 let i = 0;
 let board = new Array(100).fill(null);
 for (i = 0; i < snakes.length; i++) {
@@ -59,14 +71,20 @@ const diceRoll = () => {
   return Math.floor(Math.random() * 6) + 1;
 };
 
-let tokenPosition = 0;
-let moveIndex = 0;
-while (tokenPosition < 100) {
-  moveType[moveIndex] = "";
-  tokenPosition = turn(tokenPosition, moveIndex++);
-  moves.push(tokenPosition);
-}
-console.log("Player token : " + moves);
-console.log("Move Detail : " + moveType);
+const simulate = (n) => {
+  for (let j = 1; j <= n; j++) {
+    console.log(`__________SIMULATION ${j}_____________`);
+    let tokenPosition = 0;
+    let moveIndex = 0;
+    while (tokenPosition < 100) {
+      moveType[moveIndex] = "";
+      tokenPosition = turn(tokenPosition, moveIndex++);
+      moves.push(tokenPosition);
+    }
+    console.log("\nPlayer token : " + moves);
+    console.log("\nMove Detail : " + moveType);
+  }
+};
 
+simulate(noOfSimulations);
 console.log("__________FILE_END_____________");
