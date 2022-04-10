@@ -11,6 +11,7 @@ const ladders = [
 const snakes = [
   [3, 9],
   [1, 10],
+  [51, 82],
 ];
 const noOfSimulations = 2;
 // USER INPUTS END
@@ -21,6 +22,11 @@ console.log(`\Ladders : ${ladders.join("|")}`);
 console.log(`\Simulations : ${noOfSimulations}`);
 // USER INPUT LOG END
 
+// STAT VARIABLES
+let biggestClimb = 0;
+let biggestSlide = 100;
+// STAT VARIABLES
+
 let moves = [];
 let i = 0;
 let board = new Array(100).fill(null);
@@ -30,6 +36,7 @@ for (i = 0; i < snakes.length; i++) {
 for (i = 0; i < ladders.length; i++) {
   board[ladders[i][0] - 1] = "L" + i;
 }
+console.log(board);
 let moveType = [];
 
 const turn = (currentPosition, moveIndexInTurn) => {
@@ -52,10 +59,11 @@ const turn = (currentPosition, moveIndexInTurn) => {
     let sol = squareState.charAt(0);
     let solIndex = parseInt(squareState.substring(1));
     if (sol === "S") {
-      moveType[moveIndexInTurn] += " S";
+      moveType[moveIndexInTurn] += " " + squareState;
       currentPositionInTurn = snakes[solIndex][0];
+      console.log("\n", sol, solIndex, snakes[solIndex][0]);
     } else if (sol === "L") {
-      moveType[moveIndexInTurn] += " L";
+      moveType[moveIndexInTurn] += " " + squareState;
       currentPositionInTurn = ladders[solIndex][1];
     }
   }
@@ -73,6 +81,8 @@ const diceRoll = () => {
 
 const simulate = (n) => {
   for (let j = 1; j <= n; j++) {
+    moves = [];
+    moveType = [];
     console.log(`__________SIMULATION ${j}_____________`);
     let tokenPosition = 0;
     let moveIndex = 0;
