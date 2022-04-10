@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.fontSize": 15,
+    "editor.fontSize": 14,
+    "code-runner.customCommand": "nodemon -V snakes-ladders",
+    "code-runner.clearPreviousOutput": true,
+    "code-runner.runInTerminal": true
+}
