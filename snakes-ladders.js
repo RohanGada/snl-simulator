@@ -1,13 +1,12 @@
 console.log("__________FILE_START___________", "\n");
 console.log(
-  "\n INDEX OF MOVE TYPES \n R - Reject \n F - Finisher \n S - Snake Bite jump \n L - Ladder Climb \n M(number) - moves"
+  "\n INDEX OF MOVE TYPES \n R(number) - Reject \n F - Finisher \n S(position in array) - Snake Bite jump \n L(position in array) - Ladder Climb \n M(number) - moves"
 );
 console.log("\n\n__________USER INPUT_____________");
 
 // USER INPUTS START
 /* Since reading File or input from console was optional, for changing the
  * inputs you can change the values of variables below
- *
  */
 const ladders = [
   [2, 10],
@@ -41,11 +40,15 @@ let biggestClimb = 0;
 let biggestClimbInThisTurn = 0;
 let biggestSlide = 0;
 let biggestSlideInThisTurn = 0;
+let noOfSlidesInThisTurn = 0;
+let luckyRollInThisTurn = 0;
 let rollsInThisTurn = [];
 let longestTurn = [];
 let rolls = [];
 let climbs = [];
 let slides = [];
+let noOfSlides = [];
+let luckyRolls = [];
 // STAT VARIABLES
 
 let moves = [];
@@ -83,6 +86,7 @@ const turn = (currentPosition, moveIndexInTurn) => {
     } else {
       moveType[moveIndexInTurn] += ` M(${number})`;
       moveType[moveIndexInTurn] += " F";
+      luckyRollInThisTurn++;
       return currentPosition + number;
     }
   }
@@ -97,11 +101,23 @@ const turn = (currentPosition, moveIndexInTurn) => {
       if (biggestSlideInThisTurn < currentPositionInTurn - snakes[solIndex][0]) {
         biggestSlideInThisTurn += currentPositionInTurn - snakes[solIndex][0];
       }
+      noOfSlidesInThisTurn++;
       currentPositionInTurn = snakes[solIndex][0];
     } else if (sol === "L") {
       moveType[moveIndexInTurn] += " " + squareState;
       if (biggestClimbInThisTurn < ladders[solIndex][1] - currentPositionInTurn) {
         biggestClimbInThisTurn += ladders[solIndex][1] - currentPositionInTurn;
+      }
+      luckyRollInThisTurn++;
+      if (
+        [
+          (board[currentPositionInTurn - 2] || "").charAt(0),
+          (board[currentPositionInTurn - 1] || "").charAt(0),
+          (board[currentPositionInTurn + 1] || "").charAt(0),
+          (board[currentPositionInTurn + 2] || "").charAt(0),
+        ].includes("S")
+      ) {
+        luckyRollInThisTurn++;
       }
       currentPositionInTurn = ladders[solIndex][1];
     }
@@ -125,10 +141,14 @@ const simulate = (n) => {
     let noOfRollsInSimulation = 0;
     let climbInSimulation = 0;
     let slideInSimulation = 0;
+    let noOfSlidesInSimulation = 0;
+    let luckyRollInSimulation = 0;
     while (tokenPosition < 100) {
       // INITIALIZING
       biggestClimbInThisTurn = 0;
       biggestSlideInThisTurn = 0;
+      noOfSlidesInThisTurn = 0;
+      luckyRollInThisTurn = 0;
       moveType[moveIndex] = "";
       rollsInThisTurn = [];
       // END
@@ -140,6 +160,8 @@ const simulate = (n) => {
       noOfRollsInSimulation += rollsInThisTurn.length;
       climbInSimulation += biggestClimbInThisTurn;
       slideInSimulation += biggestSlideInThisTurn;
+      noOfSlidesInSimulation += noOfSlidesInThisTurn;
+      luckyRollInSimulation += luckyRollInThisTurn;
       if (biggestClimb < biggestClimbInThisTurn) {
         biggestClimb = biggestClimbInThisTurn;
       }
@@ -157,6 +179,8 @@ const simulate = (n) => {
     rolls.push(noOfRollsInSimulation);
     climbs.push(climbInSimulation);
     slides.push(slideInSimulation);
+    noOfSlides.push(noOfSlidesInSimulation);
+    luckyRolls.push(luckyRollInSimulation);
     console.log("\nPlayer token over turns : " + moves);
     console.log("\nAll move details : " + moveType);
   }
@@ -187,4 +211,14 @@ console.log(
 console.log("Biggest Slide : ", biggestSlide);
 console.log("Biggest Climb : ", biggestClimb);
 console.log("Longest Turn : ", longestTurn);
+console.log(
+  `Minimum/Average/Maximum unlucky rolls during the game : ${noOfSlides[0]} / ${average(noOfSlides).toFixed(2)} / ${
+    noOfSlides[noOfSlides.length - 1]
+  }`
+);
+console.log(
+  `Minimum/Average/Maximum lucky rolls during the game : ${luckyRolls[0]} / ${average(luckyRolls).toFixed(2)} / ${
+    luckyRolls[luckyRolls.length - 1]
+  }`
+);
 console.log("__________FILE_END_____________");
