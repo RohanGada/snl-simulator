@@ -1,4 +1,3 @@
-console.log("__________FILE_START___________", "\n");
 console.log(
   "\n INDEX OF MOVE TYPES \n R(number) - Reject \n F - Finisher \n S(position in array) - Snake Bite jump \n L(position in array) - Ladder Climb \n M(number) - moves"
 );
@@ -86,7 +85,9 @@ const turn = (currentPosition, moveIndexInTurn) => {
     } else {
       moveType[moveIndexInTurn] += ` M(${number})`;
       moveType[moveIndexInTurn] += " F";
-      luckyRollInThisTurn++;
+      if (!moveType[moveIndexInTurn - 1].includes("R(") && number === 6) {
+        luckyRollInThisTurn++;
+      }
       return currentPosition + number;
     }
   }
@@ -187,6 +188,8 @@ const simulate = (n) => {
   rolls.sort();
   climbs.sort();
   slides.sort();
+  noOfSlides.sort();
+  luckyRolls.sort();
 };
 
 simulate(noOfSimulations);
@@ -221,4 +224,3 @@ console.log(
     luckyRolls[luckyRolls.length - 1]
   }`
 );
-console.log("__________FILE_END_____________");
